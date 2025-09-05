@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>001 在场景中自定义光源绘制立方体</h1>
+  <center id="myContainer"></center>
+<script>
+  let myRenderer = new THREE.WebGLRenderer();
+  let myWidth = 400;
+  let myHeight = 320;
+  myRenderer.setSize(myWidth, myHeight);
+  myRenderer.setClearColor("white", 1);
+  $("#myContainer").append(myRenderer.domElement);
+  let myScene = new THREE.Scene();
+  let myLight = new THREE.PointLight("red"); // 点光源
+  myLight.position.set(400, 800, 300); // 设置光源位置
+  myScene.add(myLight);
+  let ratio = myWidth / myHeight;
+  let coef = 120;
+  let myCamera = new THREE.OrthographicCamera(-coef * ratio, coef * ratio, coef, -coef, 1, 1000);
+  myCamera.position.set(400, 300, 200);
+  myCamera.lookAt(myScene.position);
+  let myGeometry = new THREE.BoxGeometry(100, 100, 100); // 立方体
+  let myMaterial = new THREE.MeshLambertMaterial({ color: 0xFFBF00 });
+  myMesh = new THREE.Mesh(myGeometry, myMaterial); // 网格
+  myScene.add(myMesh);
+  myRenderer.render(myScene, myCamera); // 渲染
+</script></body></html>
