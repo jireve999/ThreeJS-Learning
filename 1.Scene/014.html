@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/TransformControls.js"></script>
+</head>
+<body>
+  <h1>014 使用TransformControls旋转对象</h1>
+  <center id="myContainer"></center>
+<script>
+ let myRenderer=new THREE.WebGLRenderer({antialias:true});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera=new THREE.PerspectiveCamera(50,
+     window.innerWidth/window.innerHeight,0.01,30000);
+ myCamera.position.set(1000,500,800);
+ myCamera.lookAt(0,100,0);
+ let myScene=new THREE.Scene();
+ myScene.background=new THREE.Color(0xffffff);
+ myScene.add(new THREE.GridHelper(1000,10,0x888888,0x444444));
+ let myLight=new THREE.DirectionalLight(0xffffff,2);
+ myLight.position.set(1,1,1);
+ myScene.add(myLight);
+ let myTexture=new THREE.TextureLoader().load('../images/img002.jpg',function(){
+  myRenderer.render(myScene,myCamera);
+ });
+ let myGeometry=new THREE.BoxBufferGeometry(400,400,400);
+ let myMaterial=new THREE.MeshLambertMaterial({map:myTexture});
+ let myTransformControls=
+      new THREE.TransformControls(myCamera,myRenderer.domElement);
+ myTransformControls.addEventListener('change',function(){
+  myRenderer.render(myScene,myCamera);
+ });
+ myTransformControls.setMode("rotate"); // translate rotate scale
+ let myMesh=new THREE.Mesh(myGeometry,myMaterial);
+ myScene.add(myMesh);
+ myTransformControls.attach(myMesh);
+ myScene.add(myTransformControls);
+</script></body></html>
