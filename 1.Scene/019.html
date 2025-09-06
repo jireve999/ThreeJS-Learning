@@ -1,0 +1,58 @@
+<html><head> <meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+</head>
+<body>
+  <h1>019 在鼠标单击对象时改变对象颜色</h1>
+  <center id="myContainer" ></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true });
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $('#myContainer')[0].appendChild(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ myScene.add(new THREE.AmbientLight(0xffffff));
+ let myCamera=new THREE.PerspectiveCamera(75,
+     window.innerWidth/window.innerHeight,0.1,1000);
+ myCamera.position.set(622,342,443);
+ let myOrbitControls=new THREE.OrbitControls(myCamera);
+ //创建多个立方体
+ let myGeometry = new THREE.BoxGeometry(120,120,120);
+ for(let i=0;i<10;i++) {
+  let myMaterial = new THREE.MeshLambertMaterial({
+   color: Math.random() * 0xffffff});
+  let myMesh = new THREE.Mesh(myGeometry, myMaterial);
+  myMesh.position.x = Math.random() * 580 -140;
+  myMesh.position.y = Math.random() * 580 - 140;
+  myMesh.position.z = Math.random() * 580 - 140;
+  myScene.add(myMesh);
+ }
+ //渲染多个立方体
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene,myCamera);
+ }
+ let myMouse=new THREE.Vector2();
+ //THREE.Raycaster用于通过鼠标去获取在3D世界被选择的图形
+ let myRaycaster=new THREE.Raycaster();
+ $(document.body).click(function(event){
+  //拦截页面默认的点击事件
+  event.preventDefault();
+  //计算当前鼠标的坐标
+  myMouse.x=(event.clientX/window.innerWidth)*2-1;
+  myMouse.y=-(event.clientY/window.innerHeight)*2+1;
+  //根据当前鼠标和照相机重置Raycaster
+  myRaycaster.setFromCamera(myMouse,myCamera);
+  //获取被点击(选择)的图形
+  let myIntersects=myRaycaster.intersectObjects(myScene.children);
+  if(myIntersects.length>0){
+   //生成随机颜色值
+   let myColor=Math.random()*0xffffff;
+   //动态更新该图形表面的颜色
+   myIntersects[0].object.material.color=new THREE.Color(myColor);
+  }
+ });
+</script></body></html>
