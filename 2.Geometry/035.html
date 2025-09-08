@@ -1,0 +1,56 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+</head>
+<body>
+  <h1>035 使用多种颜色设置立方体的表面</h1>
+  <center id="myContainer"></center>
+<script type="text/javascript">
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer( {antialias: true } );
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $('#myContainer')[0].appendChild(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 30, 1000);
+ myCamera.position.set(-50, 40, 50);
+ myCamera.lookAt(new THREE.Vector3(0, 0 , 0));
+ //创建立方体图形
+ let mySize=9;
+ let myCubeGeometry = new THREE.BoxGeometry(mySize-0.1, mySize-0.1, mySize-0.1);
+ //创建材质数组
+ let myMaterials = [];
+ myMaterials.push(new THREE.MeshBasicMaterial({color: 'red'}));
+ myMaterials.push(new THREE.MeshBasicMaterial({color: 'green'}));
+ myMaterials.push(new THREE.MeshBasicMaterial({color: 'blue'}));
+ myMaterials.push(new THREE.MeshBasicMaterial({color: 'cyan'}));
+ myMaterials.push(new THREE.MeshBasicMaterial({color: 'yellow'}));
+ myMaterials.push(new THREE.MeshBasicMaterial({color: 'pink'}));
+ //添加单个立方体
+ myCubeMesh = new THREE.Mesh(myCubeGeometry, myMaterials); 
+ myCubeMesh.position.set(-mySize*3+ mySize, mySize*3- mySize, -mySize*3); 
+ myScene.add(myCubeMesh);
+ //添加魔方(27个立方体)
+ myGroupMesh = new THREE.Mesh();
+ for (let x = 0; x < 3; x++) {
+  for (let y = 0; y < 3; y++) {
+   for (let z = 0; z < 3; z++) {
+    let myMesh = new THREE.Mesh(myCubeGeometry, myMaterials);
+    myMesh.position.set(x * mySize - mySize,
+        y * mySize - mySize, z * mySize - mySize);
+    myGroupMesh.add(myMesh);
+   }
+  }
+ }
+ myScene.add(myGroupMesh);
+ //渲染图形
+ animate();
+ function animate() {
+  myRenderer.render(myScene,myCamera);
+ }
+ let myOrbitControls = new THREE.OrbitControls(myCamera,
+     myRenderer.domElement);           //创建轨道控制器
+ myOrbitControls.addEventListener('change',animate);  //监听鼠标、键盘事件
+</script></body></html>
