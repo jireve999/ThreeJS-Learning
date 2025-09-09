@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>047 在场景中根据名称旋转立方体</h1>
+  <center id="myContainer" ></center>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 0.1, 1000);
+ myCamera.position.set(40.06,20.92,42.68);
+ myCamera.lookAt(new THREE.Vector3(0, 0, 0));
+ //创建第一个立方体
+ let myGeometry1 =new THREE.BoxGeometry(16, 16, 16);
+ let myMaterial1 =new THREE.MeshNormalMaterial();
+ let myMesh1 = new THREE.Mesh(myGeometry1, myMaterial1);
+ myMesh1.translateX(-20);
+ myMesh1.name = 'myCube1';
+ myScene.add(myMesh1);
+ //创建第二个立方体
+ let myGeometry2 = new THREE.BoxGeometry(16, 16, 16);
+ let myMaterial2 =new THREE.MeshNormalMaterial();
+ let myMesh2 = new THREE.Mesh(myGeometry2, myMaterial2);
+ myMesh2.translateX(16);
+ myMesh2.name = 'myCube2';
+ myScene.add(myMesh2);
+ //渲染(旋转)立方体
+ animate();
+ function animate() {
+  requestAnimationFrame(animate);
+  myScene.getObjectByName('myCube1').rotation.y += 0.05;
+  myRenderer.render(myScene, myCamera);
+ };
+</script></body>
+</html>
+

@@ -1,0 +1,60 @@
+<html><head> <meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+</head>
+<body>
+  <h1>045 在场景中绘制居中显示的魔方</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize( window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ myScene.add(new THREE.AxesHelper(120));
+ myScene.background = new THREE.Color('white');
+ myScene.add(new THREE.AmbientLight(0xffffff));
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,0.1,1000);
+ myCamera.position.set(100,100,100);
+ myCamera.lookAt(myScene.position);
+ let myControls=new THREE.OrbitControls(myCamera,myRenderer.domElement);
+ //创建魔方模型
+ let myMaterials=[];
+ myMaterials.push(new THREE.MeshPhongMaterial({color:0x009e60}));
+ myMaterials.push(new THREE.MeshPhongMaterial({color:0x0051ba}));
+ myMaterials.push(new THREE.MeshPhongMaterial({color:0xffd500}));
+ myMaterials.push(new THREE.MeshPhongMaterial({color:0xff5800}));
+ myMaterials.push(new THREE.MeshPhongMaterial({color:0xc41e3a}));
+ myMaterials.push(new THREE.MeshPhongMaterial({color:0xffffff}));
+ let myGroup=new THREE.Group();
+ for(let x=0;x<6;x++){
+  for(let y=0;y<6;y++){
+   for(let z=0;z<6;z++){
+    let myGeometry=new THREE.BoxGeometry(5.9,5.9,5.9);
+    let myMesh=new THREE.Mesh(myGeometry,myMaterials);
+    myMesh.position.set(x*6-6,y*6+6,z*6-6);
+    myGroup.add(myMesh);
+   }
+  }
+ }
+ myGroup.scale.set(2,2,2);
+ myScene.add(myGroup);
+ let myBox3 = new THREE.Box3(); // 创建一个包围盒
+ myBox3.expandByObject(myGroup); // 扩展包围盒的边界，使得参数指定的对象及其子对象都被包含在包围盒中
+ let myX=myBox3.max.x-myBox3.min.x; // min表示包围盒的xyz的下边界，max表示包围盒的xyz的上边界
+ let myY=myBox3.max.y-myBox3.min.y;
+ let myZ=myBox3.max.z-myBox3.min.z;
+ let myNewX=myBox3.min.x+myX/2;
+ let myNewY=myBox3.min.y+myY/2;
+ let myNewZ=myBox3.min.z+myZ/2;
+ //根据计算结果重新设置魔方位置，使其居中显示
+ myGroup.position.set(-myNewX,-myNewY,-myNewZ);
+ //渲染魔方模型
+ animate();
+ function animate(){
+  myRenderer.render(myScene,myCamera);
+  requestAnimationFrame(animate);
+ }
+</script></body></html>

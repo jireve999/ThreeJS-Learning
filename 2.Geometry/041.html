@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>041 根据索引设置立方体face的材质</h1>
+  <div id="myContainer"></div>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ let myCamera=new THREE.PerspectiveCamera(60,
+     window.innerWidth/window.innerHeight,0.1,1000);
+ myCamera.position.z = 64;
+ //创建立方体
+ let myGeometry = new THREE.BoxGeometry(30,30,30);
+ //创建12种颜色的材质
+ let myMaterials=[];
+ for(let i = 0; i < 12; i++){
+  let myMaterial = new THREE.MeshBasicMaterial(
+      { color: new THREE.Color(Math.random() *0xffffff)});
+  myMaterials.push(myMaterial);
+ }
+ //使用材质数组设置立方体表面颜色
+ let myMesh=new THREE.Mesh(myGeometry,myMaterials);
+ //使用12种材质设置立方体的12个face
+ for(let  j=0; j<12; j++){
+  myGeometry.faces[j].materialIndex=j;
+ }
+ myScene.add(myMesh);
+ //渲染立方体
+ animate();
+ function animate() {
+  requestAnimationFrame(animate);
+  myMesh.rotation.x += 0.01;
+  myMesh.rotation.y += 0.02;
+  myMesh.rotation.z += 0.01;
+  myRenderer.render(myScene, myCamera);
+ }
+</script></body>
+</html>

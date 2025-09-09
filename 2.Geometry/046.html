@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>046 在场景中围绕坐标轴旋转立方体</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myWidth =480,myHeight = 320;
+ let myRenderer = new THREE.WebGLRenderer({antialias: true} );
+ myRenderer.setSize(myWidth, myHeight);
+ myRenderer.setClearColor("white", 1);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ let k = myWidth / myHeight, s = 120;
+ let myCamera = new THREE.OrthographicCamera(-s * k,
+     s * k, s, -s, 1, 1000);
+ myCamera.position.set(400, 300, 200);
+ myCamera.lookAt(myScene.position);
+ //创建立方体
+ let myGeometry = new THREE.BoxGeometry(100, 100, 100);
+ let myMaterial = new THREE.MeshNormalMaterial();
+ let myMesh = new THREE.Mesh(myGeometry, myMaterial);
+ myScene.add(myMesh);
+ //使用定时器实现间隔渲染立方体
+ setInterval(function(){
+  myMesh.rotateX(0.05);        //按照指定的弧度围绕x轴旋转网格(立方体)
+  myRenderer.render(myScene, myCamera);
+ },120);
+</script></body>
+</html>
+
