@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <!-- <script src="http://threejs.org/build/three.js"></script>-->
+ <!-- <script src="http://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>-->
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>062 在场景中绘制旋转的地球模型</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({ antialias: true });
+ myRenderer.setPixelRatio(window.devicePixelRatio);
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myClock = new THREE.Clock();
+ let myCamera = new THREE.PerspectiveCamera(60,
+     window.innerWidth / window.innerHeight, 1, 10000);
+ myCamera.position.set(0, 100, 300);
+ myCamera.lookAt(new THREE.Vector3(0, 0, 0))
+ let myScene = new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ myScene.add(new THREE.AmbientLight('lightgreen'));
+ //创建球体(地球)
+ let myGeometry = new THREE.SphereBufferGeometry(120, 64, 64);
+ let myMap=new THREE.TextureLoader().load('../images/img007.png');
+ let myMaterial = new THREE.MeshPhongMaterial({map: myMap});
+ let myMesh = new THREE.Mesh(myGeometry, myMaterial);
+ myScene.add(myMesh);
+ //渲染(旋转)球体(地球)
+ animate();
+ function animate() {
+  requestAnimationFrame(animate);
+  let delta = myClock.getDelta();
+  myRenderer.render(myScene, myCamera);
+  //按照设置的角度增量实现绕y轴旋转地球
+  myMesh.rotation.y += delta / 5;
+ }
+</script></body>
+</html>
+
+
