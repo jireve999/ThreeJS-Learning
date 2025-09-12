@@ -1,0 +1,62 @@
+<html><head> <meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/SceneUtils.js"></script>
+</head>
+<body>
+  <h1>074 在场景中自定义曲线绘制管子</h1>
+  <div id="myContainer"></div>
+<script type="text/javascript">
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setClearColor(new THREE.Color(0xffffff));
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ myRenderer.shadowMapEnabled = true;
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 0.1, 1000);
+ myCamera.position.x = -30;
+ myCamera.position.y = 40;
+ myCamera.position.z = 50;
+ myCamera.lookAt(new THREE.Vector3(0, 0, 0));
+ //随机设置创建曲线的5个顶点
+ let myPoints = [];
+ for (let i = 0; i < 5; i++) {
+  let randomX = -20 + Math.round(Math.random() * 50);
+  let randomY = -15 + Math.round(Math.random() * 40);
+  let randomZ = -20 + Math.round(Math.random() * 40);
+  myPoints.push(new THREE.Vector3(randomX, randomY, randomZ));
+ }
+ //根据5个顶点创建组(即5个顶点作为一个整体)
+ let myGroup = new THREE.Object3D();
+ let myPointMaterial = new THREE.MeshBasicMaterial({
+  color: 0xff0000, transparent: false});
+ myPoints.forEach(function (point) {
+  let myPointGeometry = new THREE.SphereGeometry(1);
+  let myPointMesh = new THREE.Mesh(myPointGeometry, myPointMaterial);
+  myPointMesh.position.copy(point);
+  myGroup.add(myPointMesh);
+ });
+ myScene.add(myGroup);
+ //根据顶点创建曲线
+ let myCurve=new THREE.SplineCurve3(myPoints);
+ //根据曲线创建管子
+ let myTubeGeometry = new THREE.TubeGeometry(myCurve, 64,1,8, false);
+ let myTubeMaterial = new THREE.MeshBasicMaterial({
+  color: 0x00ff00, transparent: true, opacity: 0.6});
+ let myWireFrameMaterial = new THREE.MeshBasicMaterial();
+ myWireFrameMaterial.wireframe = true;
+ let myTubeMesh = THREE.SceneUtils.createMultiMaterialObject(
+     myTubeGeometry, [myTubeMaterial, myWireFrameMaterial]);
+ myScene.add(myTubeMesh);
+ //渲染曲线管子
+ let myStep = 0;
+ animate();
+ function animate() {
+  myGroup.rotation.y = myStep+= 0.01;
+  myTubeMesh.rotation.y = myStep += 0.01;
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene, myCamera);
+ }
+</script></body></html>

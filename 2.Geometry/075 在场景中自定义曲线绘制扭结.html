@@ -1,0 +1,37 @@
+<html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+ <script src="../ThreeJS/CurveExtras.js"></script>
+</head>
+<body>
+  <h1>075 在场景中自定义曲线绘制扭结</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true,});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera=new THREE.PerspectiveCamera(50,
+     window.innerWidth/window.innerHeight,0.01,1000);
+ myCamera.position.set(0,50,260);
+ let myScene=new THREE.Scene();
+ myScene.background=new THREE.Color(0xffffff);
+ let myLight=new THREE.DirectionalLight(0xffffff);
+ myLight.position.set(0,0,1);
+ myScene.add(myLight);
+ let myControls=new THREE.OrbitControls(myCamera);
+ //创建自定义扭结
+ let myCurve=new THREE.Curves.GrannyKnot();
+ let myGeometry=new THREE.TubeBufferGeometry(myCurve,500,2,20); // path, tubularSegments, radius, radialSegments
+ let myMesh=new THREE.Mesh(myGeometry,
+     new THREE.MeshLambertMaterial({color:0xff00ff}));
+ myMesh.scale.set(4,4,4);
+ myScene.add(myMesh);
+ //渲染自定义扭结
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene,myCamera);
+ }
+</script></body></html>
