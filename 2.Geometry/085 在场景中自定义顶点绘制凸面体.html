@@ -1,0 +1,61 @@
+<html><head> <meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/SceneUtils.js"></script>
+ <script src="../ThreeJS/ConvexGeometry.js"></script>
+</head>
+<body>
+  <h1>085 在场景中自定义顶点绘制凸面体</h1>
+  <div id="myContainer"></div>
+<script type="text/javascript">
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ myScene.background=new THREE.Color(0xffffff);
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 0.1, 1000);
+ myCamera.position.x = -30;
+ myCamera.position.y = 40;
+ myCamera.position.z = 30;
+ myCamera.lookAt(new THREE.Vector3(0, 0, 0));
+ //随机设置创建凸面体的顶点
+ let myPoints = [];
+ for (let i = 0; i < 20; i++) {
+  let randomX = -15 + Math.round(Math.random() * 30);
+  let randomY = -15 + Math.round(Math.random() * 30);
+  let randomZ = -15 + Math.round(Math.random() * 30);
+  myPoints.push(new THREE.Vector3(randomX, randomY, randomZ));
+ }
+ //根据所有顶点创建组(即所有顶点作为一个整体)
+ let myGroup = new THREE.Object3D();
+ let myPointMaterial = new THREE.MeshBasicMaterial({
+  color: 0xff0000, transparent: false});
+ myPoints.forEach(function (point) {
+  let myPointGeometry = new THREE.SphereGeometry(0.4);
+  let myPointMesh = new THREE.Mesh(myPointGeometry, myPointMaterial);
+  myPointMesh.position.copy(point);
+  myGroup.add(myPointMesh);
+ });
+ myScene.add(myGroup);
+ //根据顶点创建凸面体
+ let myConvexGeometry= new THREE.ConvexGeometry(myPoints);
+ let myConvexMaterial = new THREE.MeshBasicMaterial({
+  color: 0x00ff00, transparent: true, opacity: 0.2});
+ myConvexMaterial.side = THREE.DoubleSide;
+ let myWireFrameMaterial = new THREE.MeshBasicMaterial();
+ myWireFrameMaterial.wireframe = true;
+ let myConvexMesh = THREE.SceneUtils.createMultiMaterialObject(
+     myConvexGeometry, [myConvexMaterial, myWireFrameMaterial]); // 使用线框材质作为凸面体的材质
+ myScene.add(myConvexMesh);
+ //渲染凸面体
+ let myStep = 0;
+ animate();
+ function animate() {
+  myGroup.rotation.y = myStep+= 0.01;
+  myConvexMesh.rotation.y = myStep += 0.01;
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene, myCamera);
+ }
+</script></body></html>
