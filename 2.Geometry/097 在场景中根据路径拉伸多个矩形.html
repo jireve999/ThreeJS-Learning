@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+</head>
+<body>
+  <h1>097 在场景中根据路径拉伸多个矩形</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true} );
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
+ myCamera.position.set(200, 200, 200);
+ myCamera.lookAt({ x: 0, y: 0, z: 0 });
+ let myScene = new THREE.Scene();
+ let myPointLight = new THREE.PointLight('white');
+ myPointLight.position.set(20, 200, 30);
+ myScene.add(myPointLight);
+ //创建矩形
+ let myShape = new THREE.Shape();
+ //四条直线(线条)绘制一个矩形
+ myShape.moveTo(-10,-10);						    //绘制起点
+ myShape.lineTo(-10,10);								//第2个顶点
+ myShape.lineTo(10,10);									//第3个顶点
+ myShape.lineTo(10,-10);								//第4个顶点
+ myShape.lineTo(-10,-10);								//第5个顶点
+ //设置在y轴方向拉伸矩形
+ let myCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3( 0, 0,0 ), new THREE.Vector3( 0,40,0 )]);
+ let myGeometry = new THREE.ExtrudeGeometry(myShape,{extrudePath:myCurve});
+ let myMaterial=new THREE.MeshPhongMaterial({ color:'cyan'});
+ //创建多个矩形
+ let myArray=[];
+ for(let i=0;i<6;i++){
+  let myMeshes=[];
+  for(let j=0;j<6;j++) {
+   let myMesh = new THREE.Mesh(myGeometry, myMaterial);
+   myScene.add(myMesh);
+   myMesh.translateX(-100 + 30 * i);
+   myMesh.translateZ(-100 + 30 * j);
+   myMesh.translateY(-50);
+   myMeshes.push(myMesh);
+  }
+  myArray.push(myMeshes);
+ }
+ //渲染图形
+ let z=0;
+ animate();
+ function  animate(){
+  myRenderer.render(myScene, myCamera);
+  z=z+0.01;
+  for(let u=0; u<myArray.length; u++) {
+   for(let v=0; v<myArray[u].length; v++) {
+    let myScale= 2 * Math.sin(z + 100 / u-100/v) + 2;
+    myArray[u][v].scale.y = myScale;
+   }
+  }
+  requestAnimationFrame(animate);
+ }
+ let myOrbitControls = new THREE.OrbitControls(myCamera);
+</script></body></html>
