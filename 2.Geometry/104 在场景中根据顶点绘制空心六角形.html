@@ -1,0 +1,40 @@
+<html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>104 在场景中根据顶点绘制空心六角形</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,1,1000);
+ myCamera.position.set(0,0,140);
+ myScene.add(myCamera);
+ myScene.add(new THREE.AmbientLight(0xffffff));
+ //创建六角星
+ let myMaterial=new THREE.LineBasicMaterial({color:0xff0000})
+ let myGeometry = new THREE.Geometry();
+ //如果myCount=5,则为五角星，如果myCount=7,则为七角星，依此类推
+ let myCount=6;
+ for(let i=0;i<myCount*2;i++){
+  let l=i%2==1?24:48;
+  let a=i/myCount*Math.PI;
+  myGeometry.vertices.push(new THREE.Vector3(Math.cos(a)*l,Math.sin(a)*l,0));
+ }
+ let myLine = new THREE.LineLoop(myGeometry,myMaterial); // 将多个顶点连接起来，以行程封闭图形
+ myScene.add(myLine);
+ //渲染六角星
+ animate();
+ function animate(){
+  myRenderer.render(myScene,myCamera);
+  requestAnimationFrame(animate);
+ }
+</script></body>
+</html>
+

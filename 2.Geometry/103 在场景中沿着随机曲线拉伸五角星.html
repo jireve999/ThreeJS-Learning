@@ -1,0 +1,52 @@
+<html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/TrackballControls.js"></script>
+</head>
+<body>
+  <h1>103 在场景中沿着随机曲线拉伸五角星</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true,});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ myScene.background=new THREE.Color(0xffffff);
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,1,1000);
+ myCamera.position.set(100,-474,121);
+ myScene.add(new THREE.AmbientLight(0x222222));
+ let myLight=new THREE.PointLight(0xffffff);
+ myLight.position.copy(myCamera.position);
+ myScene.add(myLight);
+ let myTrackballControls=
+     new THREE.TrackballControls(myCamera,myRenderer.domElement);
+ //创建拉伸曲线
+ let myRandomPoints=[];
+ for(let i=0;i<10;i++){
+  myRandomPoints.push(new THREE.Vector3((i-4.5)*50,
+      THREE.MathUtils.randFloat(-50,50),THREE.MathUtils.randFloat(-50,50)));
+ }
+ let myRandomPath=new THREE.CatmullRomCurve3(myRandomPoints); //创建拉伸曲线的材质
+ let myExtrudeSettings={steps:600,extrudePath:myRandomPath};
+ //创建五角星
+ let myPoints=[],myCount=5;
+ for (let i=0;i<myCount * 2; i ++ ) {
+  let l=i%2==1?20:40;
+  let a=i/myCount*Math.PI;
+  myPoints.push(new THREE.Vector2(Math.cos(a)*l,Math.sin(a)*l));
+ }
+ let myShape=new THREE.Shape(myPoints);
+ let myGeometry=new THREE.ExtrudeGeometry(myShape,myExtrudeSettings); // 创建拉伸五角星的材质
+ let myMaterial=new THREE.MeshLambertMaterial({color:0x00ff00});
+ let myMesh=new THREE.Mesh(myGeometry,myMaterial);
+ myScene.add(myMesh);
+ //渲染沿着曲线拉伸的五角星
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myTrackballControls.update();
+  myRenderer.render(myScene,myCamera);
+ }
+</script></body></html>

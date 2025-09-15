@@ -1,0 +1,60 @@
+<html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>102 在场景中根据指定厚度绘制五角星</h1>
+  <p><button id="myButton1">绘制五角星</button>
+ <button id="myButton2">拉伸五角星</button></p>
+<center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,1,1000);
+ myCamera.position.set(28,-46,84);
+ myScene.add(myCamera);
+ myScene.add(new THREE.AmbientLight(0xffffff));
+ var myOrbitControls =new THREE.OrbitControls(myCamera);
+ //使用数组保存五角星每个顶点的坐标
+ let myPoints=[],myCount=5,myStar;
+ for(let i=0;i<myCount*2;i++){
+  let l=i%2==1?16:32;
+  let a=i/myCount*Math.PI;
+  myPoints.push(new THREE.Vector2(Math.cos(a)*l,Math.sin(a)*l));
+ }
+ let myShape=new THREE.Shape(myPoints);
+ //创建五角星的正面材质myMaterial1和侧面材质myMaterial2
+ let myMaterial1=new THREE.MeshLambertMaterial({color:0xff0000});
+ let myMaterial2=new THREE.MeshLambertMaterial({color:0xc0c0c0});
+ let myMaterials=[myMaterial1,myMaterial2];
+ //渲染五角星
+ animate();
+ function animate(){
+  myRenderer.render(myScene,myCamera);
+  requestAnimationFrame(animate);
+ }
+ //响应单击“绘制五角星”按钮
+ $("#myButton1").click(function(){
+  if(myStar) myScene.remove(myStar);
+  let myExtrudeOptions={depth:0,bevelEnabled:false};
+  //由于depth:0，因此创建平面五角星
+  let myGeometry=new THREE.ExtrudeBufferGeometry(myShape,myExtrudeOptions);
+  myStar=new THREE.Mesh(myGeometry,myMaterials);
+  myScene.add(myStar);
+ });
+ //响应单击“拉伸五角星”按钮
+ $("#myButton2").click(function(){
+  if(myStar) myScene.remove(myStar);
+  let myExtrudeOptions={depth:8,bevelEnabled:false};
+  //根据depth:5绘制指定厚度的五角星，即拉伸五角星
+  let myGeometry=new THREE.ExtrudeBufferGeometry(myShape,myExtrudeOptions);
+  myStar=new THREE.Mesh(myGeometry,myMaterials);
+  myScene.add(myStar);
+ });
+</script></body></html>
