@@ -1,0 +1,61 @@
+<html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+ <script src="../ThreeJS/NURBSUtils.js"></script>
+ <script src="../ThreeJS/NURBSSurface.js"></script>
+</head>
+<body>
+  <h1>117 通过自定义函数绘制NURBS曲面</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true,});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera=new THREE.PerspectiveCamera(50,
+     window.innerWidth/window.innerHeight, 1,2000);
+ myCamera.position.set(0,150,750);
+ let myOrbitControls=new THREE.OrbitControls(myCamera);
+ let myScene=new THREE.Scene();
+ myScene.background=new THREE.Color(0xffffff);
+ myScene.add(new THREE.AmbientLight(0x808080));
+ let myLight=new THREE.DirectionalLight(0xffffff,1);
+ myLight.position.set(1,1,1);
+ myScene.add(myLight);
+ //设置曲面控制点
+ let myNurbsPoints=[
+  [new THREE.Vector4(-200,-200,100,1),
+   new THREE.Vector4(-200,-100,-200,1),
+   new THREE.Vector4(-200,100,250,1),
+   new THREE.Vector4(-200,200,-100,1)],
+  [new THREE.Vector4(0,-200,0,1),
+   new THREE.Vector4(0,-100,-100,5),
+   new THREE.Vector4(0,100,150,5),
+   new THREE.Vector4(0,200,0,1)],
+  [new THREE.Vector4(200,-200,-100,1),
+   new THREE.Vector4(200,-100,200,1),
+   new THREE.Vector4(200,100,-250,1),
+   new THREE.Vector4(200,200,100,1)] ];
+ let myDegree1=2;
+ let myDegree2=3;
+ let myKnots1=[0,0,0,1,1,1];
+ let myKnots2=[0,0,0,0,1,1,1,1];
+ //创建曲面
+ let myNurbsSurface=new THREE.NURBSSurface(myDegree1,
+     myDegree2,myKnots1,myKnots2,myNurbsPoints);
+ let myGeometry=new THREE.ParametricGeometry(function(u,v,target){
+  return myNurbsSurface.getPoint(u,v,target); },120,120);
+ let myTexture=new THREE.TextureLoader().load('../images/img002.jpg');
+ let myMaterial=new THREE.MeshLambertMaterial({
+  map:myTexture,side:THREE.DoubleSide});
+ let myMesh=new THREE.Mesh(myGeometry,myMaterial);
+ myMesh.scale.multiplyScalar(1.2);
+ myScene.add(myMesh);
+ //渲染曲面
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene,myCamera);
+ }
+</script></body></html>

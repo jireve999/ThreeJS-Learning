@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>113 在场景中根据指定参数绘制圆弧</h1>
+  <center id="myContainer" ></center>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize( window.innerHeight, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ let myCamera = new THREE.PerspectiveCamera( 45, 1, 1, 1000 );
+ myCamera.position.set( 0, 0,160 );
+ myCamera.lookAt(myScene.position);
+ //绘制圆弧
+ let myMaterial=new THREE.LineBasicMaterial({color:'blue'});
+ let myGeometry = new THREE.Geometry();
+ let myArcCurve = new THREE.ArcCurve(0, 0, 40, 0, Math.PI*2/4*3); // 270度 (aX, aY, radius, startAngle, endAngle)
+ let myPoints = myArcCurve.getPoints(1000);
+ myGeometry.setFromPoints(myPoints);
+ let  myArc= new THREE.Line(myGeometry,  myMaterial);
+ myScene.add(myArc );
+ //渲染圆弧
+ animate();
+ function animate(){
+  myRenderer.render(myScene,myCamera);
+  requestAnimationFrame(animate);
+ }
+</script></body>
+</html>
