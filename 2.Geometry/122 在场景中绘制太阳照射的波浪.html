@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head> <meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/OrbitControls.js"></script>
+ <script src="../ThreeJS/Water.js"></script>
+ <script src="../ThreeJS/Sky.js"></script>
+</head>
+<body>
+  <h1>122 在场景中绘制太阳照射的波浪</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ let myCamera=new THREE.PerspectiveCamera(55,
+     window.innerWidth/window.innerHeight,1,20000);
+ myCamera.position.set(30,30,100);
+ let myOrbitControls=new THREE.OrbitControls(myCamera);
+ //创建波浪
+ let myTextureLoader=new THREE.TextureLoader();
+ let myMap=myTextureLoader.load('../images/img108.jpg',
+     function(texture){texture.wrapS=texture.wrapT=THREE.RepeatWrapping;});
+ let myWaterGeometry=new THREE.PlaneBufferGeometry(10000,10000);
+ // 根据法向量贴图创建波浪平面
+ let myWater=new THREE.Water(myWaterGeometry,
+     {waterNormals:myMap,waterColor:0x0174df});
+ myWater.rotation.x=-Math.PI/2;
+ myScene.add(myWater);
+ let mySky=new THREE.Sky(); // 创建天空盒
+ mySky.scale.setScalar(10000);
+ myScene.add(mySky);
+ let mySun=new THREE.Vector3(); // 创建太阳
+ let myTheta=-Math.PI*0.01;
+ let myPhi=-Math.PI*0.59;
+ mySun.x=Math.cos(myPhi);
+ mySun.y=Math.sin(myPhi)*Math.sin(myTheta);
+ mySun.z=Math.sin(myPhi)*Math.cos(myTheta);
+ mySky.material.uniforms['sunPosition'].value.copy(mySun); // 在天空中设置太阳位置
+ //渲染动态波浪
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myWater.material.uniforms['time'].value+=1.0/60.0;
+  myRenderer.render(myScene,myCamera);
+ }
+</script></body></html>

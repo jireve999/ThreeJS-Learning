@@ -1,0 +1,34 @@
+<html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>124 在平面图形的前后设置相同贴图</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene = new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 1, 1000);
+ myCamera.position.set(0, 0, 400);
+ myScene.add(myCamera);
+ myScene.add(new THREE.AmbientLight(0xffffff));
+ //创建平面
+ let myPlaneGeometry = new THREE.PlaneGeometry(160,240, 5, 5); // 平面几何体 (width, height, widthSegments, heightSegments)
+ let myMap = THREE.ImageUtils.loadTexture("../images/img137.jpg");
+ let myPlane = new THREE.Mesh(myPlaneGeometry,
+     new THREE.MeshPhongMaterial({map: myMap, side:THREE.DoubleSide})); // 在MeshPhongMaterial材质的前后两面设置贴图myMap
+ myScene.add(myPlane);
+ //渲染平面
+ animate();
+ function animate() {
+  myRenderer.render(myScene, myCamera);
+  myPlane.rotation.y+=0.01;
+  requestAnimationFrame(animate);
+ }
+</script></body>
+</html>
