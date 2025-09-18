@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+ <script src="../ThreeJS/Reflector.js"></script>
+</head>
+<body >
+  <h1>133 在场景中根据汉字实现汉字镜像</h1>
+  <center id="myContainer" ></center>
+<script type="text/javascript">
+ //初始化渲染器
+ let myRenderer=new THREE.WebGLRenderer({antialias:true});
+ myRenderer.setPixelRatio(window.devicePixelRatio);
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ myRenderer.setClearColor("white");
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,1,500);
+ myCamera.position.set(0,15,160);
+ let myPlaneGeometry=new THREE.PlaneBufferGeometry(
+     window.innerWidth,window.innerHeight);
+ let myPlaneMaterial=new THREE.MeshBasicMaterial();
+ //创建镜子平面
+ let myPlaneMesh=new THREE.Mesh(myPlaneGeometry,myPlaneMaterial);
+ myPlaneMesh.position.y=10;
+ myPlaneMesh.rotateX(-Math.PI/2);
+ //根据平面创建镜子
+ let myReflector=new THREE.Reflector(myPlaneGeometry); // 创建镜子
+ myReflector.position.y=10;
+ myReflector.rotateX(-Math.PI/2);
+ //在场景中添加镜子(用于镜像汉字)
+ myScene.add(myReflector);
+ //绘制汉字
+ let myFontLoader=new THREE.FontLoader();
+ myFontLoader.load('../Data/MicrosoftYaHei_Regular1.json',function(font){
+  //将文本转换为二维图形
+  let myShapes=font.generateShapes('罗斌',30);
+  let myGeometry=new THREE.ShapeBufferGeometry(myShapes);
+  let myMaterial=new THREE.LineBasicMaterial({color:'red'});
+  let myMesh = new THREE.Mesh(myGeometry, myMaterial );
+  myMesh.position.x=-50;
+  myMesh.position.y=30;
+  //将汉字(二维图形)添加到场景中
+  myScene.add( myMesh );
+ });
+ //渲染汉字和汉字镜像
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene,myCamera);
+ }
+</script></body></html>

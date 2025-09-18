@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body >
+  <h1>134 在场景中加载中文字库绘制二维汉字</h1>
+  <center id="myContainer" ></center>
+<script type="text/javascript">
+ //初始化渲染器
+ let myRenderer=new THREE.WebGLRenderer({antialias:true});
+ myRenderer.setPixelRatio(window.devicePixelRatio);
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ myRenderer.setClearColor("white");
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera=new THREE.PerspectiveCamera(30,
+     window.innerWidth/window.innerHeight,1,1500);
+ myCamera.position.set(0,400,700);
+ myCamera.lookAt(new THREE.Vector3(0,150,0));
+ let myScene=new THREE.Scene();
+ //初始化FontLoader，并加载指定字库
+ let myFontLoader=new THREE.FontLoader();
+ myFontLoader.load('../Data/MicrosoftYaHei_Regular1.json',function(font){
+  //将文本转换为二维图形
+  let myShapes=font.generateShapes('罗斌',120); // 转换字符串为二维图形
+  let myGeometry=new THREE.ShapeBufferGeometry(myShapes); // 创建几何体
+  let myMaterial=new THREE.MeshBasicMaterial({color:'green'});
+  let myMesh = new THREE.Mesh(myGeometry, myMaterial );
+  myMesh.position.x=-160;
+  myMesh.position.y=100;
+  //将汉字(二维图形)添加到场景中
+  myScene.add( myMesh );
+ });
+ //渲染汉字
+ animate();
+ function animate(){
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene,myCamera);
+ }
+</script></body>
+</html>
+
+
