@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>170 使用MeshDepthlMaterial淡化多个图形</h1>
+  <center id="myContainer"></center>
+<script type="text/javascript">
+ //创建渲染器
+ let myRenderer=new THREE.WebGLRenderer({antialias:true});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ myRenderer.setClearColor('black',1.0);
+ $('#myContainer')[0].appendChild(myRenderer.domElement);
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,30,1000);
+ myCamera.position.set(-40.91020281125894,
+     12.522960007309857,22.79661391601931);
+ myCamera.lookAt(new THREE.Vector3(0,0,0));
+ let myScene=new THREE.Scene();
+ //创建100个立方体
+ let mySize=9;
+ let myGeometry=new THREE.BoxGeometry(mySize,mySize,mySize);
+ let myMaterial=new THREE.MeshDepthMaterial(); // 创建深度材质，有一个特性：即其亮度不是由光源决定的，而是由mesh到照相机的距离决定的，距离越远越暗
+ let myGroupMesh=new THREE.Mesh();
+ for(let x=0;x<100;x++){
+  let myMesh=new THREE.Mesh(myGeometry,myMaterial);
+  myMesh.position.set(x*mySize*2-mySize,0,0);
+  myGroupMesh.add(myMesh);
+ }
+ myScene.add(myGroupMesh);
+ //渲染100个立方体
+ myRenderer.render(myScene, myCamera);
+</script></body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>165 使用MeshNormalMaterial创建多色表面</h1>
+  <div id="myContainer" ></div>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true });
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera = new THREE.PerspectiveCamera(75,
+     window.innerWidth / window.innerHeight, 0.1, 1000);
+ myCamera.position.set(100.23,98.92,99.18);
+ myCamera.lookAt(new THREE.Vector3(0, 0, 0));
+ let myScene = new THREE.Scene();
+ myScene.background = new THREE.Color('white');
+ //创建四面体
+ let myGeometry = new THREE.TetrahedronGeometry(140, 0);
+ let myMaterial = new THREE.MeshNormalMaterial(); // 可以使三维图形的每一个面的颜色都从该面向外垂直指向的法向量计算得到，即法向量不同的颜色不同
+ let myMesh = new THREE.Mesh(myGeometry, myMaterial);
+ myScene.add(myMesh);
+ //渲染四面体
+ myRenderer.render(myScene, myCamera);
+</script></body>
+</html>
