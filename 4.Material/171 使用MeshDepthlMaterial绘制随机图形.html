@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>171 使用MeshDepthlMaterial绘制随机图形</h1>
+  <center id="myContainer"></center>
+<script>
+ //创建渲染器
+ let myRenderer=new THREE.WebGLRenderer({antialias:true});
+ myRenderer.setSize(window.innerWidth,window.innerHeight);
+ myRenderer.setClearColor('black',1.0);
+ $("#myContainer").append(myRenderer.domElement);
+ let myScene=new THREE.Scene();
+ let myCamera=new THREE.PerspectiveCamera(45,
+     window.innerWidth/window.innerHeight,0.1,1000);
+ myCamera.near=120; // 相机近裁剪面,默认0.1,立方体离此截面越近，越清晰越亮
+ myCamera.updateProjectionMatrix();
+ myCamera.aspect=window.innerWidth/window.innerHeight;
+ myCamera.position.set(-20,8.4,37.6);
+ myCamera.lookAt(new THREE.Vector3(0,0,0));
+ //绘制随机立方体
+ let myGeometry=new THREE.BoxGeometry(32,32,32);
+ let myMaterial=new THREE.MeshDepthMaterial();
+ for(let i=0;i<3000;i++){
+  let myMesh=new THREE.Mesh(myGeometry,myMaterial);
+  myMesh.position.x=800*(2.0*Math.random()-1.0);
+  myMesh.position.y=800*(2.0*Math.random()-1.0);
+  myMesh.position.z=800*(2.0*Math.random()-1.0);
+  myMesh.rotation.x=Math.random()*Math.PI;
+  myMesh.rotation.y=Math.random()*Math.PI;
+  myMesh.rotation.z=Math.random()*Math.PI;
+  myScene.add(myMesh);
+ }
+ //渲染随机立方体
+ myRenderer.render(myScene,myCamera);
+</script></body>
+</html>
+
