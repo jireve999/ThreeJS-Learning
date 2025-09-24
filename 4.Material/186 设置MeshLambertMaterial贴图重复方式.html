@@ -1,0 +1,60 @@
+<html><head> <meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>186 设置MeshLambertMaterial贴图重复方式</h1>
+  <p><button id="myButton1">在X方向重复2次</button>
+ <button id="myButton2">在X方向重复10次</button></p>
+<div id="myContainer"></div>
+<script>
+ //创建渲染器
+ let myRenderer= new THREE.WebGLRenderer({antialias: true});
+ myRenderer.setClearColor(new THREE.Color(0xffffff, 1.0));
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ $("#myContainer").append(myRenderer.domElement);
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 0.1, 1000);
+ myCamera.position.x = 0;
+ myCamera.position.y = 12;
+ myCamera.position.z = 200;
+ myCamera.lookAt(new THREE.Vector3(0, 0, 0));
+ let myScene = new THREE.Scene();
+ myScene.background=new THREE.Color(0xffffff);
+ myScene.add(new THREE.AmbientLight(0xffffff));
+ let myLight = new THREE.DirectionalLight();
+ myLight.position.set(0, 30, 20);
+ myScene.add(myLight);
+ //根据贴图创建球体
+ // let myTexture = THREE.ImageUtils.loadTexture("../images/img089.jpg");
+ let myTexture = new THREE.TextureLoader().load("../images/img089.jpg");
+ myTexture.wrapS = THREE.RepeatWrapping;
+ myTexture.wrapT = THREE.RepeatWrapping;
+ //设置在x方向重复2次，在y方向重复1次贴图
+ myTexture.repeat.set(2,1);
+ let myMaterial = new THREE.MeshLambertMaterial();
+ myMaterial.map = myTexture;
+ let myGeometry=new THREE.SphereGeometry(60,50, 50);
+ let myMesh = new THREE.Mesh(myGeometry, myMaterial);
+ myMesh.position.x = 1;
+ myScene.add(myMesh);
+ //渲染球体
+ let step = 0;
+ animate();
+ function animate() {
+  step += 0.01;
+  myMesh.rotation.y = step;
+  myMesh.rotation.x = step;
+  requestAnimationFrame(animate);
+  myRenderer.render(myScene, myCamera);
+ }
+ //响应单击“在X方向重复2次”按钮
+ $("#myButton1").click(function () {
+  myMaterial.map.repeat.set(2,1);
+ });
+ //响应单击“在X方向重复10次”按钮
+ $("#myButton2").click(function () {
+  myMaterial.map.repeat.set(10,1);
+ });
+</script></body>
+</html>
