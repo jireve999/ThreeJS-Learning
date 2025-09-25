@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>196 使用普通贴图创建PointsMaterial</h1>
+  <center id="myContainer"></center>
+<script type="text/javascript">
+ //创建渲染器, alpha: true,过滤掉画布贴图的非实心圆部分
+ let myRenderer = new THREE.WebGLRenderer({antialias: true, alpha: true });
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $('#myContainer')[0].appendChild(myRenderer.domElement);
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 30, 1000);
+ let myScene = new THREE.Scene();
+ //使用普通贴图材质创建多个粒子
+ let myMap = new THREE.TextureLoader().load( '../images/img041.png' );
+ let myGeometry =new THREE.Geometry();
+ for ( let i = 0; i < 1000; i ++ ) {
+  let myPoint = new THREE.Vector3();
+  myPoint.x = THREE.Math.randFloatSpread( 2000 );
+  myPoint.y = THREE.Math.randFloatSpread( 2000 );
+  myPoint.z = THREE.Math.randFloatSpread( 2000 );
+  myGeometry.vertices.push(myPoint);
+ }
+ // 使用普通贴图创建PointsMaterial材质时，需要设置alphaTest属性，过滤掉画布贴图的非实心圆部分
+ let myPointsMaterial = new THREE.PointsMaterial({
+  size:200, alphaTest: 0.5, map:myMap});
+ let myPoints = new THREE.Points( myGeometry, myPointsMaterial );
+ myScene.add( myPoints );
+ //渲染多个粒子
+ myRenderer.render(myScene, myCamera);
+ animate();
+ function animate() {
+  requestAnimationFrame(animate);
+  myPoints.rotation.x += 0.0006;
+  myPoints.rotation.y += 0.0006;
+  myPoints.rotation.z += 0.0006;
+  myRenderer.render(myScene, myCamera);
+ };
+</script></body>
+</html>

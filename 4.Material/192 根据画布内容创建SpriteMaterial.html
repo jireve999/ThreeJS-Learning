@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/jquery.js"></script>
+</head>
+<body>
+  <h1>192 根据画布内容创建SpriteMaterial</h1>
+  <center id="myContainer"></center>
+<script type="text/javascript">
+ //创建渲染器
+ let myRenderer = new THREE.WebGLRenderer({antialias: true });
+ myRenderer.setSize(window.innerWidth, window.innerHeight);
+ myRenderer.setClearColor('white', 1.0);
+ $('#myContainer')[0].appendChild(myRenderer.domElement);
+ let myCamera = new THREE.PerspectiveCamera(45,
+     window.innerWidth / window.innerHeight, 1, 1000);
+ myCamera.position.set(0,0,150);
+ let myScene = new THREE.Scene();
+ //创建画布，并设置画布的宽高
+ let myCanvas = document.createElement("canvas");
+ myCanvas.width =200;
+ myCanvas.height =200;
+ //在画布上绘制实心圆
+ let myContext = myCanvas.getContext("2d");
+ myContext.fillStyle = "#0000ff";
+ myContext.arc(100,100,60,0,2*Math.PI);
+ //在画布上绘制文本
+ myContext.fillText('超实用代码集锦', 10,10);
+ myContext.fill();
+ //根据画布创建纹理贴图
+ let myTexture = new THREE.Texture(myCanvas);
+ myTexture.needsUpdate = true; // 纹理贴图更新,必须要添加,否则纹理贴图不会显示
+ //根据纹理贴图创建THREE.SpriteMaterial材质
+ let mySpriteMaterial = new THREE.SpriteMaterial({map:myTexture});
+ //根据THREE.SpriteMaterial材质创建THREE.Sprite，即粒子
+ let mySprite = new THREE.Sprite(mySpriteMaterial);
+ //放大Sprite，Sprite默认都是很小的，如果不放大，基本是看不到的
+ mySprite.scale.set(100,100,1);
+ myScene.add(mySprite);
+ //渲染粒子(即显示在画布上绘制的实心圆和文本)
+ myRenderer.render(myScene, myCamera);
+</script></body>
+</html>
