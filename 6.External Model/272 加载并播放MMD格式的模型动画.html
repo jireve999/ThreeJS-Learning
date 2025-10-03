@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+ <script src="../ThreeJS/three.js"></script>
+ <script src="../ThreeJS/Ammo.js"></script>
+ <script src="../ThreeJS/MMDParser.js"></script>
+ <script src="../ThreeJS/MMDLoader.js"></script>
+ <script src="../ThreeJS/CCDIKSolver.js"></script>
+ <script src="../ThreeJS/MMDPhysics.js"></script>
+ <script src="../ThreeJS/MMDAnimationHelper.js"></script>
+</head>
+<body>
+  <h1>272 加载并播放MMD格式的模型动画</h1>
+<script>
+ Ammo().then(function(){
+  let myClock=new THREE.Clock();
+  //创建渲染器
+  let myRenderer=new THREE.WebGLRenderer({antialias:true});
+  myRenderer.setPixelRatio(window.devicePixelRatio);
+  myRenderer.setSize(window.innerWidth,window.innerHeight);
+  document.body.appendChild(myRenderer.domElement);
+  let myCamera=new THREE.PerspectiveCamera(45,
+      window.innerWidth/window.innerHeight,1,2000);
+  let myScene=new THREE.Scene();
+  myScene.background=new THREE.Color(0xffffff);
+  myScene.add(myCamera);
+  myScene.add(new THREE.AmbientLight(0x666666));
+  let myDirectionalLight=new THREE.DirectionalLight(0x887766);
+  myDirectionalLight.position.set(-1,1,1).normalize();
+  myScene.add(myDirectionalLight);
+  let myHelper=new THREE.MMDAnimationHelper();
+  let myLoader=new THREE.MMDLoader();
+  //加载MMD模型(pmd和vmd)
+  myLoader.loadWithAnimation('../Data/MyMiku.pmd','../Data/MyWave.vmd',
+      function(mmd){
+       let myMesh=mmd.mesh;
+       myHelper.add(myMesh,{animation:mmd.animation,physics:true});
+       myLoader.loadAnimation('../Data/MyWaveCamera.vmd',myCamera,
+           function(cameraAnimation){
+            myHelper.add(myCamera,{animation:cameraAnimation});
+            myScene.add(myMesh);
+           });
+      });
+  //渲染(播放)MMD模型动画
+  animate();
+  function animate(){
+   requestAnimationFrame(animate);
+   myHelper.update(myClock.getDelta());
+   myRenderer.render(myScene,myCamera);
+  }
+ });
+</script></body></html>
